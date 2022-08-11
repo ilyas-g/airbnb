@@ -4,12 +4,19 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+
+// Imports screens
+import RoomScreen from "./containers/RoomScreen";
 import HomeScreen from "./containers/HomeScreen";
 import ProfileScreen from "./containers/ProfileScreen";
 import SignInScreen from "./containers/SignInScreen";
 import SignUpScreen from "./containers/SignUpScreen";
 import SettingsScreen from "./containers/SettingsScreen";
 import SplashScreen from "./containers/SplashScreen";
+
+// Import components
+import LogoHeader from "./components/LogoHeader";
+import ArrowBack from "./components/ArrowBack";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -55,11 +62,21 @@ export default function App() {
         {userToken === null ? (
           // No token found, user isn't signed in
           <>
-            <Stack.Screen name="SignIn">
+            <Stack.Screen
+              name="SignIn"
+              options={{
+                headerShown: false,
+              }}
+            >
               {() => <SignInScreen setToken={setToken} />}
             </Stack.Screen>
-            <Stack.Screen name="SignUp">
-              {() => <SignUpScreen setToken={setToken} />}
+            <Stack.Screen
+              name="SignUp"
+              options={{
+                headerShown: false,
+              }}
+            >
+              {(props) => <SignUpScreen {...props} setToken={setToken} />}
             </Stack.Screen>
           </>
         ) : (
@@ -83,26 +100,38 @@ export default function App() {
                   }}
                 >
                   {() => (
-                    <Stack.Navigator>
+                    <Stack.Navigator
+                      screenOptions={{
+                        headerTitle: () => <LogoHeader />,
+                      }}
+                    >
                       <Stack.Screen
                         name="Home"
-                        options={{
-                          title: "My App",
-                          headerStyle: { backgroundColor: "red" },
-                          headerTitleStyle: { color: "white" },
-                        }}
+                      // options={{
+                      //   // title: "My App",
+                      //   // headerStyle: { backgroundColor: "red" },
+                      //   // headerTitleStyle: { color: "white" },
+                      //   headerTitle: () => <LogoHeader />,
+                      // }}
                       >
-                        {() => <HomeScreen />}
+                        {(props) => <HomeScreen {...props} />}
                       </Stack.Screen>
-
                       <Stack.Screen
+                        name="Room"
+                        component={RoomScreen}
+                        options={{
+                          headerLeft: () => <ArrowBack />,
+                        }}
+                      />
+
+                      {/* <Stack.Screen
                         name="Profile"
                         options={{
                           title: "User Profile",
                         }}
                       >
                         {() => <ProfileScreen />}
-                      </Stack.Screen>
+                      </Stack.Screen> */}
                     </Stack.Navigator>
                   )}
                 </Tab.Screen>
@@ -125,6 +154,33 @@ export default function App() {
                         name="Settings"
                         options={{
                           title: "Settings",
+                        }}
+                      >
+                        {() => <SettingsScreen setToken={setToken} />}
+                      </Stack.Screen>
+                    </Stack.Navigator>
+                  )}
+                </Tab.Screen>
+
+                <Tab.Screen
+                  name="TabProfile"
+                  options={{
+                    tabBarLabel: "Profile",
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons
+                        name={"person-outline"}
+                        size={size}
+                        color={color}
+                      />
+                    ),
+                  }}
+                >
+                  {() => (
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="Profile"
+                        options={{
+                          title: "Profile",
                         }}
                       >
                         {() => <SettingsScreen setToken={setToken} />}
